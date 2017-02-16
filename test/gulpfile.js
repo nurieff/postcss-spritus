@@ -1,35 +1,25 @@
 var gulp = require('gulp')
   , spritus = require('../index')
-  , sass = require('gulp-sass');
+  , autoprefixer = require('autoprefixer')
+  , precss = require('precss')
+  , postcss = require('gulp-postcss');
 
 gulp.task('css', function () {
   return gulp.src('./assets/css/*.css')
-    .pipe(spritus({
-      imageDirSave: 'public/images/',
-      searchPrefix: 's'
-    }))
+    .pipe(postcss([
+      precss(),
+      spritus(),
+      autoprefixer()
+    ]))
     .pipe(gulp.dest('./public/css'));
 });
 
-gulp.task('scss', function () {
-  return gulp.src('./assets/scss/**/*.scss')
-    .pipe(sass().on('error', sass.logError))
-    .pipe(spritus({
-      imageDirSave: 'public/images/'
-    }))
-    .pipe(gulp.dest('./public/css'));
-});
-
-gulp.task("default", ['css', 'scss']);
+gulp.task("default", ['css']);
 
 gulp.task("watch", function () {
 
   gulp.watch([
     './assets/css/*.css'
   ], ['css']);
-
-  gulp.watch([
-    './assets/scss/*.scss'
-  ], ['scss']);
 
 });
