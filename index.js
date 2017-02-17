@@ -10,9 +10,16 @@ var
   , imageminPngquant = require('imagemin-pngquant')
   ;
 
-function Spritus(css, config) {
+/**
+ * @param {Object} css
+ * @param {Object} config
+ * @param {{resolve: function, reject: function}} p
+ * @returns {Spritus}
+ * @constructor
+ */
+function Spritus(css, config, p) {
 
-  if (!(this instanceof Spritus)) return new Spritus(css, config);
+  if (!(this instanceof Spritus)) return new Spritus(css, config, p);
 
   this.config = {
     padding: 2,
@@ -26,12 +33,10 @@ function Spritus(css, config) {
 
   this.css = css;
 
-  this.decls = [];
+  this.resolve = p.resolve;
+  this.reject = p.reject;
 
-  /**
-   * @type {Function}
-   */
-  this.endCallback = null;
+  this.decls = [];
 
   /**
    * @type {Array}
@@ -61,7 +66,6 @@ Spritus.prototype.find = function () {
   var self = this;
 
   this.css.walkRules(function (rule) {
-    //console.log(rule.selector);
     rule.walkDecls(function (decl, i) {
 
       if (decl.prop === self.config.searchPrefix) {
@@ -78,15 +82,10 @@ Spritus.prototype.find = function () {
         });
       }
 
-      //console.log(decl.prop);
-      //console.log(decl.value);
-      //console.log('--');
-
     });
-
-    //console.log('----');
-
   });
+
+  return this;
 };
 
 Spritus.prototype.create = function () {
@@ -100,7 +99,7 @@ Spritus.prototype._saveFile = function (file, path, fromImagemin) {
     if (err) {
 
     }
-    fs.writeFileSync(filepath, file.contents);
+    fs.writeFile(filepath, file.contents);
 
     if (!fromImagemin) {
       console.log('spritus[save file]: ' + path + file.path);
@@ -145,22 +144,56 @@ Spritus.prototype.runHandler = function (imgFile) {
 
   if (!this.SpritusList.isComplete()) return;
 
+  var replacer = new SpritusCssReplacer(this.SpritusList, this.config.searchPrefix);
+
+  var self = this;
   var decl;
-  for(var i = 0, l = this.decls.length; i < l; ++i) {
+  for (var i = 0, l = this.decls.length; i < l; ++i) {
     decl = this.decls[i];
 
     if (decl.prop === self.config.searchPrefix) {
-      // TODO
+      if (decl.value.indexOf('phw') !== -1) {
+        var props = replacer.phw(decl.value);
+
+        if (props) {
+          props.forEach(function (item) {
+            decl.parent.append(item);
+          });
+        }
+        decl.parent.removeChild(decl);
+
+      } else if(decl.value.indexOf('each') !== -1) {
+        var newRules = replacer.each(decl.value);
+
+        var root = decl.parent.root();
+
+        if (newRules) {
+          newRules.forEach(function (item) {
+            var r = postcss.rule({selector: decl.parent.selector + '-' + item.key});
+            item.decls.forEach(function (d) {
+              r.append(d);
+            });
+
+            decl.parent.walkDecls(function (decl) {
+              if (decl.prop !== self.config.searchPrefix) {
+                r.append(decl.clone());
+              }
+            });
+
+            root.insertBefore(decl.parent, r);
+          })
+        }
+
+        root.removeChild(decl.parent);
+      }
     } else {
-      // TODO
+      decl.value = replacer.asValue(decl.value);
     }
 
   }
 
-  this.strCSS = SpritusCssReplacer.makeCSS(this.strCSS, this.SpritusList, this.config.searchPrefix);
-
   var path = this.config.imageDirSave.indexOf('/') === 0 ? this.config.imageDirSave : this.rootPath + this.config.imageDirSave;
-  var self = this;
+
   mkdirp(path, function (err) {
     if (err) {
       console.log(err);
@@ -179,16 +212,19 @@ Spritus.prototype.runHandler = function (imgFile) {
     }
 
   });
+
+  this.resolve();
 };
 
-module.exports = postcss.plugin('spritus', function(options) {
+module.exports = postcss.plugin('postcss-spritus', function (options) {
 
-  return function(css) {
+  return function (css) {
 
-    Spritus(css, options || {})
-      .find()
-      .create();
-
+    return new Promise(function (resolve, reject) {
+      Spritus(css, options || {}, {resolve:resolve, reject: reject})
+        .find()
+        .create();
+    });
   }
 
 });

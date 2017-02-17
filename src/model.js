@@ -88,7 +88,7 @@ SpritusModel.prototype._spriteHandler = function (callback, err, result) {
   });
 
   this.list.incrementComplete();
-  callback(imgFile);
+  callback.call(null,imgFile);
 };
 
 SpritusModel.prototype.position = function (spriteName) {

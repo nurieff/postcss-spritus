@@ -7,9 +7,9 @@ var gulp = require('gulp')
 gulp.task('css', function () {
   return gulp.src('./assets/css/*.css')
     .pipe(postcss([
-      precss(),
+      //precss(),
       spritus(),
-      autoprefixer()
+      //autoprefixer()
     ]))
     .pipe(gulp.dest('./public/css'));
 });

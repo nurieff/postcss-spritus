@@ -16,6 +16,16 @@
   width: spritus-width("assets/images/auth/*.png", "vk");
 }
 
+.icon-twitter {
+  spritus: phw("assets/images/auth/*.png", "twitter");
+}
+
+.icon {
+  background-image: spritus-url("assets/images/auth/*.png?padding=10&name=auth2");
+  display: inline;
+  spritus:each("assets/images/auth/*.png?padding=10&name=auth2");
+}
+
 @media screen and (max-width: 960px) {
     .class {
         background: red;
