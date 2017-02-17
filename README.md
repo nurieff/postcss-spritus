@@ -4,6 +4,8 @@ Find the sprites and then creates, saves and compresses
 
 Easy to use with your CSS
 
+*For vanilla CSS or SCSS use [gulp-css-spritus](https://www.npmjs.com/package/gulp-css-spritus)*
+
 ## Install
 ```
 npm install postcss-spritus --save
