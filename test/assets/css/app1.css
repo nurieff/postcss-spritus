@@ -1,7 +1,9 @@
+$spr: "assets/images/auth/*.png";
+
 .icon {
   display: inline-flex;
-  background-image: spritus-url("assets/images/auth/*.png");
-  background-size: spritus-size("assets/images/auth/*.png");
+  background-image: spritus-url($spr);
+  background-size: spritus-size($spr);
 }
 
 .icon-google {

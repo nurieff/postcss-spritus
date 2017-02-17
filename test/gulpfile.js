@@ -1,13 +1,12 @@
 var gulp = require('gulp')
   , spritus = require('../index')
-  , autoprefixer = require('autoprefixer')
   , precss = require('precss')
   , postcss = require('gulp-postcss');
 
 gulp.task('css', function () {
   return gulp.src('./assets/css/*.css')
     .pipe(postcss([
-      //precss(),
+      precss(),
       spritus(),
       //autoprefixer()
     ]))

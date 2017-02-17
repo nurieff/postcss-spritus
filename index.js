@@ -170,6 +170,7 @@ Spritus.prototype.runHandler = function (imgFile) {
         if (newRules) {
           newRules.forEach(function (item) {
             var r = postcss.rule({selector: decl.parent.selector + '-' + item.key});
+            r.source = decl.parent.source;
             item.decls.forEach(function (d) {
               r.append(d);
             });
