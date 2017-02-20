@@ -68,19 +68,50 @@ Spritus.prototype.find = function () {
   this.css.walkRules(function (rule) {
     rule.walkDecls(function (decl, i) {
 
-      if (decl.prop === self.config.searchPrefix) {
-        decl.value.replace(new RegExp("[^\\(]+\\(\\\"([^\\\"]+)\\\"", 'ig'), function (str) {
-          self.SpritusList.push(arguments[1]);
-          self.decls.push(decl);
-          return str;
-        });
-      } else {
-        decl.value.replace(new RegExp(self.config.searchPrefix + "\\-[^\\(]+\\(\\\"([^\\\"]+)\\\"", 'ig'), function (str) {
-          self.SpritusList.push(arguments[1]);
+      if (decl.prop === self.config.searchPrefix || decl.value.indexOf(self.config.searchPrefix) !== -1) {
+        decl.value.replace(new RegExp("([^\\(]+)\\(\\\"([^\\\"]+)\\\"(\\)|,\\s*?\\\"([^\\)\\\"]*)\\\")", 'ig'), function (str) {
+
+          var sprtie = arguments[2];
+          var method = arguments[1];
+          var arg = arguments[4] ? arguments[4] : null;
+
+          /**
+           * @type {SpritusModel}
+           */
+          var sModel = self.SpritusList.push(sprtie);
+
+          if (method.indexOf('each') !== -1) {
+            sModel.isFull();
+          } else if(arg) {
+            sModel.used(arg);
+          }
+
           self.decls.push(decl);
           return str;
         });
       }
+
+      // if (decl.prop === self.config.searchPrefix) {
+      //   decl.value.replace(new RegExp("[^\\(]+\\(\\\"([^\\\"]+)\\\"(\\)|)", 'ig'), function (str) {
+      //     /**
+      //      * @type {SpritusModel}
+      //      */
+      //     var sModel = self.SpritusList.push(arguments[1]);
+      //
+      //     if (decl.value.indexOf('each') !== -1) {
+      //       sModel.isFull();
+      //     }
+      //
+      //     self.decls.push(decl);
+      //     return str;
+      //   });
+      // } else {
+      //   decl.value.replace(new RegExp(self.config.searchPrefix + "\\-[^\\(]+\\(\\\"([^\\\"]+)\\\"", 'ig'), function (str) {
+      //     self.SpritusList.push(arguments[1]);
+      //     self.decls.push(decl);
+      //     return str;
+      //   });
+      // }
 
     });
   });

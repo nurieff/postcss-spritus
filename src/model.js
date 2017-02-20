@@ -31,6 +31,14 @@ function SpritusModel(list, str) {
    * @private
    */
   this._str = str;
+
+  /**
+   * Full sprite or small
+   * @type {boolean}
+   * @private
+   */
+  this._isFull = false;
+  this._used = [];
   this._path = str.indexOf('/') === 0 ? str : this.list.spritus.rootPath + str;
 
   /**
@@ -53,10 +61,29 @@ function SpritusModel(list, str) {
 }
 
 SpritusModel.prototype.run = function (callback) {
+  var images = [];
+  if (this._isFull || this._used.length == 0) {
+    images = this._images;
+  } else {
+    var u;
+    var self = this;
+    images = this._images.filter(function (item) {
+      var r = false;
+      for(var i = 0, l = self._used.length; i < l; ++i) {
+        u = self._used[i];
+        if (item.indexOf(u) !== -1) {
+          r = true;
+          break;
+        }
+      }
+      return r;
+    });
+
+  }
 
   Spritesmith.run(
     {
-      src: this._images,
+      src: images,
       padding: this._padding,
       algorithm: this._algorithm,
     },
@@ -89,6 +116,17 @@ SpritusModel.prototype._spriteHandler = function (callback, err, result) {
 
   this.list.incrementComplete();
   callback.call(null,imgFile);
+};
+
+
+SpritusModel.prototype.isFull = function () {
+  this._isFull = true;
+};
+
+SpritusModel.prototype.used = function (u) {
+  if (this._used.indexOf(u) === -1) {
+    this._used.push(u);
+  }
 };
 
 SpritusModel.prototype.position = function (spriteName) {
