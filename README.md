@@ -4,6 +4,8 @@ Find the sprites and then creates, saves and compresses
 
 Easy to use with your CSS
 
+The sprite is stored only those images that you use
+
 *For vanilla CSS or SCSS use [gulp-css-spritus](https://www.npmjs.com/package/gulp-css-spritus)*
 
 ## Install
@@ -181,6 +183,7 @@ Now you can now use
 .icon {
     background-image: myprefix-url(...);
     background-size: myprefix-size(...);
+    myprefix:phw(...);
 }
 ```
 
