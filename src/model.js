@@ -131,9 +131,11 @@ SpritusModel.prototype.used = function (u) {
 
 SpritusModel.prototype.position = function (spriteName) {
 
-  if (!(spriteName in this._spriteImages)) return '0px 0px';
+  if (!(spriteName in this._spriteImages)) return '0 0';
 
-  return this._spriteImages[spriteName].x + 'px ' + this._spriteImages[spriteName].y + 'px';
+  return (this._spriteImages[spriteName].x ? '-' + this._spriteImages[spriteName].x + 'px' : '0')
+    + ' ' +
+    (this._spriteImages[spriteName].y ? '-' + this._spriteImages[spriteName].y + 'px' : '0')
 };
 
 SpritusModel.prototype.url = function () {
