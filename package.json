@@ -1,6 +1,6 @@
 {
   "name": "postcss-spritus",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "description": "Find the sprites and then creates, saves and compresses",
   "main": "index.js",
   "scripts": {
@@ -30,7 +30,7 @@
     "pngquant-bin": "^3.1.1",
     "postcss": "^5.2.14",
     "pretty-bytes": "^4.0.2",
-    "spritesmith": "^3.1.0"
-  },
-  "devDependencies": {}
+    "spritesmith": "^3.1.0",
+    "gulp-util": "^3.0.8"
+  }
 }
