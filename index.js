@@ -127,7 +127,7 @@ Spritus.prototype._saveFile = function (file, path, fromImagemin) {
   var filepath = path + file.path;
 
   fs.unlink(filepath, function (err) {
-    if (err) throw err;
+    if (err) {}
 
     fs.writeFile(filepath, file.contents, function (err) {
       if (err) throw err;

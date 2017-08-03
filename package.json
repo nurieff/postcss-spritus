@@ -1,6 +1,6 @@
 {
   "name": "postcss-spritus",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "Find the sprites and then creates, saves and compresses",
   "main": "index.js",
   "scripts": {
